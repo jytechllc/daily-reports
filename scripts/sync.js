@@ -15,13 +15,13 @@ const config = {
     channelId: required("SLACK_CHANNEL_ID"),
   },
   github: {
-    appId: required("GITHUB_APP_ID"),
-    privateKey: required("GITHUB_APP_PRIVATE_KEY").replace(/\\n/g, "\n"),
-    installationId: required("GITHUB_APP_INSTALLATION_ID"),
-    owner: required("GITHUB_OWNER"),
-    repo: required("GITHUB_REPO"),
-    branch: process.env.GITHUB_BRANCH || "main",
-    basePath: process.env.GITHUB_BASE_PATH || "",
+    appId: required("GH_APP_ID"),
+    privateKey: required("GH_APP_PRIVATE_KEY").replace(/\\n/g, "\n"),
+    installationId: required("GH_APP_INSTALLATION_ID"),
+    owner: required("GH_OWNER"),
+    repo: required("GH_REPO"),
+    branch: process.env.GH_BRANCH || "main",
+    basePath: process.env.GH_BASE_PATH || "",
     token: null, // populated at runtime via App installation token
   },
   trigger: {

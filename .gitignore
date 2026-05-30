@@ -2,3 +2,6 @@
 .DS_Store
 Thumbs.db
 .env
+
+# GitHub
+.github
