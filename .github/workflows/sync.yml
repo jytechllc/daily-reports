@@ -1,0 +1,66 @@
+name: Sync Slack Daily Reports
+
+on:
+  # Scheduled trigger: 18:30 Shanghai time daily (UTC+8 = UTC 10:30)
+  schedule:
+    - cron: "30 10 * * 1-5"   # Monday to Friday
+
+  # Allow manual trigger with optional date specification
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Sync date (format YYYY-MM-DD, leave empty=today)"
+        required: false
+        default: ""
+      hours:
+        description: "Lookback hours (default 24)"
+        required: false
+        default: "24"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run sync script
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          GITHUB_APP_ID: ${{ secrets.GITHUB_APP_ID }}
+          GITHUB_APP_PRIVATE_KEY: ${{ secrets.GITHUB_APP_PRIVATE_KEY }}
+          GITHUB_APP_INSTALLATION_ID: ${{ secrets.GITHUB_APP_INSTALLATION_ID }}
+          GITHUB_OWNER: ${{ vars.GITHUB_OWNER }}
+          GITHUB_REPO: ${{ vars.GITHUB_REPO }}
+          GITHUB_BRANCH: ${{ vars.GITHUB_BRANCH || 'main' }}
+          GITHUB_BASE_PATH: ${{ vars.GITHUB_BASE_PATH || 'daily-reports' }}
+          TRIGGER_KEYWORDS: ${{ vars.TRIGGER_KEYWORDS || '日报,daily report,今日完成,【完成】' }}
+          TIMEZONE: ${{ vars.TIMEZONE || 'Asia/Shanghai' }}
+        run: |
+          DATE_ARG=""
+          HOURS_ARG=""
+
+          if [ -n "${{ github.event.inputs.date }}" ]; then
+            DATE_ARG="--date ${{ github.event.inputs.date }}"
+          fi
+
+          if [ -n "${{ github.event.inputs.hours }}" ]; then
+            HOURS_ARG="--hours ${{ github.event.inputs.hours }}"
+          fi
+
+          node scripts/sync.js $DATE_ARG $HOURS_ARG
+
+      - name: Summary
+        if: success()
+        run: |
+          echo "### ✅ Sync Complete" >> $GITHUB_STEP_SUMMARY
+          echo "- Date: ${{ github.event.inputs.date || 'Today' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Trigger: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Time: $(date -u '+%Y-%m-%d %H:%M UTC')" >> $GITHUB_STEP_SUMMARY
