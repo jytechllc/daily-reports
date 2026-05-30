@@ -28,19 +28,20 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
 
       - name: Run sync script
         env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
-          GITHUB_APP_ID: ${{ secrets.GITHUB_APP_ID }}
-          GITHUB_APP_PRIVATE_KEY: ${{ secrets.GITHUB_APP_PRIVATE_KEY }}
-          GITHUB_APP_INSTALLATION_ID: ${{ secrets.GITHUB_APP_INSTALLATION_ID }}
-          GITHUB_OWNER: ${{ vars.GITHUB_OWNER }}
-          GITHUB_REPO: ${{ vars.GITHUB_REPO }}
-          GITHUB_BRANCH: ${{ vars.GITHUB_BRANCH || 'main' }}
-          GITHUB_BASE_PATH: ${{ vars.GITHUB_BASE_PATH || 'daily-reports' }}
+          GH_APP_ID: ${{ secrets.GH_APP_ID }}
+          GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
+          GH_APP_INSTALLATION_ID: ${{ secrets.GH_APP_INSTALLATION_ID }}
+          GH_OWNER: ${{ vars.GH_OWNER }}
+          GH_REPO: ${{ vars.GH_REPO }}
+          GH_BRANCH: ${{ vars.GH_BRANCH || 'main' }}
+          GH_BASE_PATH: ${{ vars.GH_BASE_PATH || 'daily-reports' }}
           TRIGGER_KEYWORDS: ${{ vars.TRIGGER_KEYWORDS || '日报,daily report,今日完成,【完成】' }}
           TIMEZONE: ${{ vars.TIMEZONE || 'Asia/Shanghai' }}
         run: |
