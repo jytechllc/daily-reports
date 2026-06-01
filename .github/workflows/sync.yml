@@ -2,7 +2,7 @@ name: Sync Slack Daily Reports
 
 on:
   schedule:
-    - cron: "00 19 * * 1-5"   # Monday to Friday
+    - cron: "00 19 * * *"   # Monday to Sunday
 
   # Allow manual trigger with optional date specification
   workflow_dispatch:
